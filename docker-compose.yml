@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  nodeprisma:
+    image: postgres
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      POSTGRES_DB: nestjs
+      POSTGRES_PASSWORD: testpass123
+      POSTGRES_USER: postgres
+    ports:
+      - "4500:5432"
+    volumes:
+      - D:\golang\go-jwt\db:/var/lib/postgresql/data
