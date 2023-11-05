@@ -27,7 +27,7 @@ func RegisterController(c *gin.Context) {
 		return
 	}
 
-	// Create a new user if the username is not already in use
+	// Create new User
 	encryptedPassword, _ := bcrypt.GenerateFromPassword([]byte(req.Password), 12)
 	newUser := orm.User{Username: req.Username, Password: string(encryptedPassword)}
 	result := orm.DB.Create(&newUser)
