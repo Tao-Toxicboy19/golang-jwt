@@ -5,6 +5,7 @@ import (
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"os"
 	"time"
 	"toxicboy/go-jwt/orm"
 )
@@ -38,10 +39,11 @@ func LoginController(c *gin.Context) {
 		return
 	}
 
-	hmacSampleSecret = []byte("secret-jwt-secret")
+	hmacSampleSecret = []byte(os.Getenv("JWT_SECRET_KEY"))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"foo": user.ID,
+		"user": user.ID,
 		"nbf": time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
 
 	tokenString, _ := token.SignedString(hmacSampleSecret)
