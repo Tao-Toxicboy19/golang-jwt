@@ -38,6 +38,7 @@ func main() {
 	router.Use(cors.Default())
 	router.POST("/local/register", func(c *gin.Context) {
 
+		// request body
 		var req Register
 
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -45,9 +46,10 @@ func main() {
 			return
 		}
 
+		// Create
 		encrptedPassword, _ := bcrypt.GenerateFromPassword([]byte(req.Password), 12)
-
 		newUser := User{Username: req.Username, Password: string(encrptedPassword)}
+
 		result := db.Create(&newUser)
 
 		if result.Error != nil {
