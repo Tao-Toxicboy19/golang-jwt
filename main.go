@@ -3,11 +3,10 @@ package main
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"net/http"
 	"time"
+	AuthController "toxicboy/go-jwt/controllers/auth"
+	"toxicboy/go-jwt/orm"
 )
 
 type User struct {
@@ -25,40 +24,11 @@ type Register struct {
 }
 
 func main() {
-	dsn := "host=localhost user=postgres password=testpass123 dbname=nestjs port=4500 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("Failed to connect to database")
-	}
-
-	// Migrate the schema
-	db.AutoMigrate(&User{})
-
+	orm.ConfigDb()
+	
 	router := gin.Default()
 	router.Use(cors.Default())
-	router.POST("/local/register", func(c *gin.Context) {
-
-		// request body
-		var req Register
-
-		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		// Create
-		encrptedPassword, _ := bcrypt.GenerateFromPassword([]byte(req.Password), 12)
-		newUser := User{Username: req.Username, Password: string(encrptedPassword)}
-
-		result := db.Create(&newUser)
-
-		if result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"message": "OK"})
-	})
+	router.POST("/local/register", AuthController.RegisterController)
 
 	router.Run()
 }
