@@ -45,7 +45,7 @@ func main() {
 			return
 		}
 
-		encrptedPassword, _ := bcrypt.GenerateFromPassword([]byte(req.Password), 10)
+		encrptedPassword, _ := bcrypt.GenerateFromPassword([]byte(req.Password), 12)
 
 		newUser := User{Username: req.Username, Password: string(encrptedPassword)}
 		result := db.Create(&newUser)
